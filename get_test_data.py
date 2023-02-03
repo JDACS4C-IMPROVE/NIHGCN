@@ -5,7 +5,7 @@ import os
 os.environ['CANDLE_DATA_DIR'] = 'tmp/'
 
 fname='nihgcn_data.tar.gz'
-origin='http://chia.team/IMPROVE_data/input_txt_Nick.txt'
+origin='http://chia.team/IMPROVE_data/nihgcn_data.tar.gz'
 
 # Download and unpack the data in CANDLE_DATA_DIR
 candle.file_utils.get_file(fname, origin)
