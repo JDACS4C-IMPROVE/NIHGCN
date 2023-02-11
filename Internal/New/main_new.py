@@ -47,6 +47,14 @@ for dim in target_dim:
                                                                 evaluate_fun=roc_auc, args=args)
             true_data_s = true_data_s.append(translate_result(true_data))
             predict_data_s = predict_data_s.append(translate_result(predict_data))
+        #added by Chia
+        path = "./result_data" #set to output directory
+        # Check whether the specified path exists or not
+        isExist = os.path.exists(path)
+        if not isExist:
+            # Create a new directory because it does not exist
+            os.makedirs(path)
+            print("The new directory is created!")
         if dim:
             true_data_s.to_csv("./result_data/drug_" + str(target_index) + "_true_data.csv")
             predict_data_s.to_csv("./result_data/drug_" + str(target_index) + "_predict_data.csv")

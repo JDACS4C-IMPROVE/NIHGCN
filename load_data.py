@@ -1,6 +1,5 @@
 from myutils import *
 
-
 def load_data(args):
     if args.data == 'gdsc':
         return _load_gdsc(args)
@@ -16,17 +15,17 @@ def load_data(args):
 def _load_gdsc(args):
     args.alpha = 0.25
     args.layer_size = [1024,1024]
-    data_dir = dir_path(k=1) + "NIHGCN/Data/GDSC/"
-    # 加载细胞系-药物矩阵
+    data_dir = dir_path(k=1) + "Data/GDSC/"
+    # 加载细胞系-药物矩阵 = loading cell-lines drug matrix
     res = pd.read_csv(data_dir + "cell_drug_binary.csv", index_col=0, header=0)
     res = np.array(res, dtype=np.float32)
     pos_num = sp.coo_matrix(res).data.shape[0]
 
-    # 加载药物-指纹特征矩阵
+    # 加载药物-指纹特征矩阵 = loading drug finger printing matrix
     drug_feature = pd.read_csv(data_dir + "drug_feature.csv", index_col=0, header=0)
     drug_feature = np.array(drug_feature, dtype=np.float32)
 
-    # 加载细胞系-基因特征矩阵
+    # 加载细胞系-基因特征矩阵 = load cell-lines gene feature matrix
     exprs = pd.read_csv(data_dir + "cell_exprs.csv", index_col=0, header=0)
     exprs = np.array(exprs, dtype=np.float32)
 
@@ -38,7 +37,7 @@ def _load_gdsc(args):
 def _load_ccle(args):
     args.alpha = 0.45
     args.layer_size = [512,512]
-    data_dir = dir_path(k=1) + 'NIHGCN/Data/CCLE/'
+    data_dir = dir_path(k=1) + 'Data/CCLE/'
 
     # 加载细胞系-药物矩阵
     res = pd.read_csv(data_dir + "cell_drug_binary.csv", index_col=0, header=0)
@@ -61,8 +60,8 @@ def _load_ccle(args):
 def _load_pdx(args):
     args.alpha = 0.15
     args.layer_size = [1024,1024]
-    pdx_data_dir = dir_path(k=1) + "NIHGCN/Data/PDX/"
-    gdsc_data_dir = dir_path(k=1) + "NIHGCN/Data/GDSC/"
+    pdx_data_dir = dir_path(k=1) + "Data/PDX/"
+    gdsc_data_dir = dir_path(k=1) + "Data/GDSC/"
 
     # 加载GDSC细胞系-药物矩阵
     gdsc_res = pd.read_csv(gdsc_data_dir + "cell_drug_binary.csv", index_col=0, header=0)
@@ -106,8 +105,8 @@ def _load_pdx(args):
 def _load_tcga(args):
     args.alpha = 0.1
     args.layer_size = [1024,1024]
-    tcga_data_dir = dir_path(k=1) + "NIHGCN/Data/TCGA/"
-    gdsc_data_dir = dir_path(k=1) + "NIHGCN/Data/GDSC/"
+    tcga_data_dir = dir_path(k=1) + "Data/TCGA/"
+    gdsc_data_dir = dir_path(k=1) + "Data/GDSC/"
 
     # 加载GDSC细胞系-药物矩阵
     gdsc_res = pd.read_csv(gdsc_data_dir + "cell_drug_binary.csv", index_col=0, header=0)

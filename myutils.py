@@ -531,7 +531,7 @@ def dir_path(k=1):
     """
     :param k: 当前路径后退级数
     :return: 后退k级后的目录
-    """
+    
     fpath = os.path.realpath(__file__)
     dir_name = os.path.dirname(fpath)
     dir_name = dir_name.replace("\\", "/")
@@ -544,6 +544,9 @@ def dir_path(k=1):
         p -= 1
     p += 1
     dir_name = dir_name[0: p]
+    """
+    # altered by Chia
+    dir_name = "/usr/local/NIHGCN/tmp/common/"
     return dir_name
 
 
