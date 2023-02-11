@@ -1,6 +1,7 @@
 from myutils import *
 
-def load_data(args):
+def load_data(params):
+    """
     if args.data == 'gdsc':
         return _load_gdsc(args)
     elif args.data == 'ccle':
@@ -11,50 +12,26 @@ def load_data(args):
         return _load_tcga(args)
     else:
         raise NotImplementedError
-
-def _load_gdsc(args):
-    args.alpha = 0.25
-    args.layer_size = [1024,1024]
-    data_dir = dir_path(k=1) + "Data/GDSC/"
+    """
+    data_dir = params['data_dir2']
+    #print(data_dir + params['drug_matrix_data'])
     # 加载细胞系-药物矩阵 = loading cell-lines drug matrix
-    res = pd.read_csv(data_dir + "cell_drug_binary.csv", index_col=0, header=0)
+    res = pd.read_csv(data_dir + params['drug_matrix_data'], index_col=0, header=0)
     res = np.array(res, dtype=np.float32)
     pos_num = sp.coo_matrix(res).data.shape[0]
 
     # 加载药物-指纹特征矩阵 = loading drug finger printing matrix
-    drug_feature = pd.read_csv(data_dir + "drug_feature.csv", index_col=0, header=0)
+    drug_feature = pd.read_csv(data_dir + params['drug_fingerprint_data'], index_col=0, header=0)
     drug_feature = np.array(drug_feature, dtype=np.float32)
 
     # 加载细胞系-基因特征矩阵 = load cell-lines gene feature matrix
-    exprs = pd.read_csv(data_dir + "cell_exprs.csv", index_col=0, header=0)
+    exprs = pd.read_csv(data_dir + params['exprs_data'], index_col=0, header=0)
     exprs = np.array(exprs, dtype=np.float32)
 
     # 加载null_mask
-    null_mask = pd.read_csv(data_dir + "null_mask.csv", index_col=0, header=0)
+    null_mask = pd.read_csv(data_dir + params['cell_drug_null_data'], index_col=0, header=0)
     null_mask = np.array(null_mask, dtype=np.float32)
-    return res, drug_feature, exprs, null_mask, pos_num, args
-
-def _load_ccle(args):
-    args.alpha = 0.45
-    args.layer_size = [512,512]
-    data_dir = dir_path(k=1) + 'Data/CCLE/'
-
-    # 加载细胞系-药物矩阵
-    res = pd.read_csv(data_dir + "cell_drug_binary.csv", index_col=0, header=0)
-    res = np.array(res, dtype=np.float32)
-    pos_num = sp.coo_matrix(res).data.shape[0]
-
-    # 加载药物-指纹特征矩阵
-    drug_feature = pd.read_csv(data_dir + "drug_feature.csv", index_col=0, header=0)
-    drug_feature = np.array(drug_feature, dtype=np.float32)
-
-    # 加载细胞系-基因特征矩阵
-    exprs = pd.read_csv(data_dir + "cell_exprs.csv", index_col=0, header=0)
-    exprs = np.array(exprs, dtype=np.float32)
-
-    # 加载null_mask
-    null_mask = np.zeros(res.shape, dtype=np.float32)
-    return res, drug_feature, exprs, null_mask, pos_num, args
+    return res, drug_feature, exprs, null_mask, pos_num
 
 
 def _load_pdx(args):

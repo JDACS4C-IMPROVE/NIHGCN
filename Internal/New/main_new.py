@@ -42,13 +42,13 @@ for dim in target_dim:
         predict_data_s = pd.DataFrame()
         for fold in range(n_kfold):
             true_data, predict_data = nihgcn_new(cell_exprs=exprs, drug_finger=drug_finger,
-                                                                res_mat=res,null_mask=null_mask,
-                                                                target_dim=dim,target_index=target_index,
-                                                                evaluate_fun=roc_auc, args=args)
+                                                 res_mat=res,null_mask=null_mask,
+                                                 target_dim=dim,target_index=target_index,
+                                                 evaluate_fun=roc_auc, args=args)
             true_data_s = true_data_s.append(translate_result(true_data))
             predict_data_s = predict_data_s.append(translate_result(predict_data))
         #added by Chia
-        path = "./result_data" #set to output directory
+        path = "./results_data" #set to output directory
         # Check whether the specified path exists or not
         isExist = os.path.exists(path)
         if not isExist:
@@ -56,8 +56,8 @@ for dim in target_dim:
             os.makedirs(path)
             print("The new directory is created!")
         if dim:
-            true_data_s.to_csv("./result_data/drug_" + str(target_index) + "_true_data.csv")
-            predict_data_s.to_csv("./result_data/drug_" + str(target_index) + "_predict_data.csv")
+            true_data_s.to_csv(path + "/drug_" + str(target_index) + "_true_data.csv")
+            predict_data_s.to_csv(path + "/drug_" + str(target_index) + "_predict_data.csv")
         else:
-            true_data_s.to_csv("./result_data/cell_" + str(target_index) + "_true_data.csv")
-            predict_data_s.to_csv("./result_data/cell_" + str(target_index) + "_predict_data.csv")
+            true_data_s.to_csv(path + "/cell_" + str(target_index) + "_true_data.csv")
+            predict_data_s.to_csv(path + "/cell_" + str(target_index) + "_predict_data.csv")

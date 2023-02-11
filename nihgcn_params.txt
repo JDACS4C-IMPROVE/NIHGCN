@@ -2,11 +2,22 @@
 cache_subdir = 'data_processed/mixed_set/processed'
 data_url = 'https://chia.team/IMPROVE_data/NIHGCN'
 model_name = 'NIHGCN'
+output_dir = '/usr/local/NIHGCN/results'
+gpus = 'cuda:0'
+learning_rate = 0.001
+epoches = 1000
 [Local]
-exprs_data = 'cell_exprs.cvs'
+weight_decay = 0.00001
+alpha = 0.25
+gamma = 8
+data_dir2 = '/usr/local/NIHGCN/tmp/common/Data/GDSC/'
+exprs_data = 'cell_exprs.csv'
 drug_matrix_data = 'cell_drug_binary.csv'
 drug_fingerprint_data = 'drug_feature.csv'
 pdx_response_data = 'pdx_response.csv'
 pdx_exprs_data = 'pdx_exprs.csv'
 tcga_patient_drug_matrix_data = 'patient_drug_binary.csv'
 tcga_exprs_data = 'tcga_exprs.csv'
+cell_drug_null_data = 'null_mask.csv'
+tcga_drug_null_data = 'tcga_null_mask.csv'
+pdx_drug_null_data = 'pdx_null_mask.csv'

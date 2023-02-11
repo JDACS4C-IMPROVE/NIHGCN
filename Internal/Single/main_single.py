@@ -50,6 +50,13 @@ for target_index in np.arange(res.shape[1]):
             predict_data_s = predict_data_s.append(translate_result(predict_data))
         end = time.time()
         times.append(end - start)
-    true_data_s.to_csv("./pan_result_data/noparallel_drug_" + str(target_index) + "_" + "true_data.csv")
-    predict_data_s.to_csv("./pan_result_data/noparallel_drug_" + str(target_index) + "_" + "predict_data.csv")
+    path = "./results_data" #set to output directory
+    # Check whether the specified path exists or not
+    isExist = os.path.exists(path)
+    if not isExist:
+        # Create a new directory because it does not exist
+        os.makedirs(path)
+        print("The new directory is created!")
+    true_data_s.to_csv(path + "/noparallel_drug_" + str(target_index) + "_" + "true_data.csv")
+    predict_data_s.to_csv(path + "/noparallel_drug_" + str(target_index) + "_" + "predict_data.csv")
 
