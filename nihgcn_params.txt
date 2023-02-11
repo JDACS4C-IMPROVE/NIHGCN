@@ -3,4 +3,6 @@ cache_subdir = 'data_processed/mixed_set/processed'
 data_url = 'https://chia.team/IMPROVE_data/NIHGCN'
 model_name = 'NIHGCN'
 [Local]
-exprs_data = 'cell_gene.cvs'
+exprs_data = 'cell_exprs.cvs'
+drug_matrix_data = 'cell_drug_binary.cvs'
+drug_fingerprint_data = 'drug_feature.cvs'
