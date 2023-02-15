@@ -2,15 +2,15 @@
 cache_subdir = 'data_processed/mixed_set/processed'
 data_url = 'https://chia.team/IMPROVE_data/NIHGCN'
 model_name = 'NIHGCN'
-output_dir = '/usr/local/NIHGCN/results'
+output_dir = '../results'
 gpus = 'cuda:0'
 learning_rate = 0.001
-epoches = 1000
+epochs = 1000
 [Local]
+#need to add weight_decay, alpha, and gamma as an additional parameter at some point
 weight_decay = 0.00001
-alpha = 0.25
+alpha = 0.25 
 gamma = 8
-data_dir2 = '/usr/local/NIHGCN/tmp/common/Data/GDSC/'
 exprs_data = 'cell_exprs.csv'
 drug_matrix_data = 'cell_drug_binary.csv'
 drug_fingerprint_data = 'drug_feature.csv'

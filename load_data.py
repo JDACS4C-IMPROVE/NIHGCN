@@ -1,3 +1,4 @@
+import os
 from myutils import *
 
 def load_data(params):
@@ -13,25 +14,34 @@ def load_data(params):
     else:
         raise NotImplementedError
     """
-    data_dir = params['data_dir2']
+    data_dir = params['data_dir']
     #print(data_dir + params['drug_matrix_data'])
     # 加载细胞系-药物矩阵 = loading cell-lines drug matrix
-    res = pd.read_csv(data_dir + params['drug_matrix_data'], index_col=0, header=0)
+    res = pd.read_csv(os.path.join(data_dir,params['drug_matrix_data']), index_col=0, header=0)
     res = np.array(res, dtype=np.float32)
     pos_num = sp.coo_matrix(res).data.shape[0]
 
     # 加载药物-指纹特征矩阵 = loading drug finger printing matrix
-    drug_feature = pd.read_csv(data_dir + params['drug_fingerprint_data'], index_col=0, header=0)
+    drug_feature = pd.read_csv(os.path.join(data_dir,params['drug_fingerprint_data']), index_col=0, header=0)
     drug_feature = np.array(drug_feature, dtype=np.float32)
 
     # 加载细胞系-基因特征矩阵 = load cell-lines gene feature matrix
-    exprs = pd.read_csv(data_dir + params['exprs_data'], index_col=0, header=0)
+    exprs = pd.read_csv(os.path.join(data_dir,params['exprs_data']), index_col=0, header=0)
     exprs = np.array(exprs, dtype=np.float32)
 
     # 加载null_mask
-    null_mask = pd.read_csv(data_dir + params['cell_drug_null_data'], index_col=0, header=0)
+    null_mask = pd.read_csv(os.path.join(data_dir,params['cell_drug_null_data']), index_col=0, header=0)
     null_mask = np.array(null_mask, dtype=np.float32)
-    return res, drug_feature, exprs, null_mask, pos_num
+
+    # 加载靶点药物索引
+    cell_drug = pd.read_csv(os.path.join(data_dir,params['drug_matrix_data']), index_col=0, header=0)             
+    cell_drug.columns = cell_drug.columns.astype(np.int32)
+    drug_cids = cell_drug.columns.values
+    cell_target_drug = np.array(cell_drug.loc[:, params['target_drug_cids']], dtype=np.float32)
+    target_pos_num = sp.coo_matrix(cell_target_drug).data.shape[0]
+    target_indexes = common_data_index(drug_cids, params['target_drug_cids'])
+
+    return res, drug_feature, exprs, null_mask, target_indexes, target_pos_num
 
 
 def _load_pdx(args):
