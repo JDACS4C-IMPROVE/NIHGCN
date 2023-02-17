@@ -94,10 +94,11 @@ def run(params):
             model = nihgcn(adj_mat=sampler.train_data, cell_exprs=exprs, drug_finger=drug_finger,
                            layer_size=params['layer_size'], alpha=params['alpha'], gamma=params['gamma'],
                            device=params['gpus'])
-            opt = Optimizer(model, sampler.train_data, sampler.test_data, sampler.test_mask,
+            opt = Optimizer(sampler.train_data, exprs, drug_finger, params['layer_size'], params['alpha'], params['gamma'], model,
+                            sampler.train_data, sampler.test_data, sampler.test_mask, 
                             sampler.train_mask, roc_auc, lr=params['learning_rate'], wd=params['weight_decay'],
                             epochs=params['epochs'], device=params['gpus']).to(params['gpus'])
-            true_data, predict_data = opt()
+            true_data, predict_data, model_clone = opt()
             true_datas = true_datas.append(translate_result(true_data))
             predict_datas = predict_datas.append(translate_result(predict_data))
             #save best model here
@@ -113,7 +114,7 @@ def run(params):
         print("The new directory is created!")
     pd.DataFrame(true_datas).to_csv(os.path.join(output_path,"true_data.csv"))
     pd.DataFrame(predict_datas).to_csv(os.path.join(output_path,"predict_data.csv"))
-
+    torch.save(model_clone,os.path.join(output_path,params['experiment_id']+"_best_model.pt")) #change the name here if you want 
 
 def main():
     params = initialize_parameters()

@@ -3,6 +3,7 @@ from abc import ABC
 import torch.optim as optim
 from myutils import *
 
+import copy
 
 class ConstructAdjMatrix(nn.Module, ABC):
     def __init__(self, original_adj_mat, device="cpu"):
@@ -100,9 +101,16 @@ class nihgcn(nn.Module, ABC):
 
 
 class Optimizer(nn.Module, ABC):
-    def __init__(self, model, train_data, test_data, test_mask, train_mask, evaluate_fun,
-                 lr=0.001, wd=1e-05, epochs=200, test_freq=20, device="cpu"):
+    def __init__(self, adj_mat, cell_exprs, drug_finger, layer_size, alpha, gamma, model,
+                 train_data, test_data, test_mask, train_mask, evaluate_fun,
+                 lr=0.001, wd=1e-05, epochs=200, test_freq=20, device="cpu"):                 
         super(Optimizer, self).__init__()
+        self.adj_mat = adj_mat
+        self.cell_exprs = cell_exprs
+        self.drug_finger = drug_finger
+        self.layer_size = layer_size
+        self.alpha = alpha
+        self.gamma = gamma
         self.model = model.to(device)
         self.train_data = train_data.to(device)
         self.test_data = test_data.to(device)
@@ -114,6 +122,7 @@ class Optimizer(nn.Module, ABC):
         self.epochs = epochs
         self.test_freq = test_freq
         self.optimizer = optim.Adam(self.model.parameters(), lr=self.lr, weight_decay=self.wd)
+        self.device = device
 
     def forward(self):
         true_data = torch.masked_select(self.test_data, self.test_mask)
@@ -130,8 +139,11 @@ class Optimizer(nn.Module, ABC):
             if auc > best_auc:
                 best_auc = auc
                 best_predict = torch.masked_select(predict_data, self.test_mask)
+                model_clone = nihgcn(self.adj_mat, self.cell_exprs, self.drug_finger, self.layer_size,
+                                     self.alpha, self.gamma, self.device)
+                model_clone.load_state_dict(copy.deepcopy(self.model.state_dict()))
             if epoch % self.test_freq == 0:
                 print("epoch:%4d" % epoch.item(), "loss:%.6f" % loss.item(), "auc:%.4f" % auc)
         print("Fit finished.")
-        return true_data, best_predict
+        return true_data, best_predict, model_clone
 
