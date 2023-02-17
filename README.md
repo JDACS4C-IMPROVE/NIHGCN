@@ -3,6 +3,11 @@ README
 NIHGCN:Predicting cancer drug response using parallel heterogeneous graph convolutional networks with neighborhood interactions
 This document mainly introduces the python code of NIHGCN algorithm.
 
+# IMPROVE PROJECT INSTRUCTIONS
+- source candle_glue.sh (in place of preprocess for now)
+- train.sh $CUDA_DEVICES $CANDLE_DATA_DIR
+- infer.sh (soon)
+
 # Requirements
 - pytorch==1.6.0
 - tensorflow==2.3.1
