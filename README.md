@@ -4,8 +4,31 @@ NIHGCN:Predicting cancer drug response using parallel heterogeneous graph convol
 This document mainly introduces the python code of NIHGCN algorithm.
 
 # IMPROVE PROJECT INSTRUCTIONS
-- source candle_glue.sh (in place of preprocess for now)
-- train.sh $CUDA_DEVICES $CANDLE_DATA_DIR
+
+The improve project requires standardized interfaces for data preprocessing,  training the model and inference. 
+
+## Data Preprocessing
+To create model input from default raw data call `source candle_glue.sh` (in place of preprocess for now)
+
+## Model Training
+
+`train.sh $CUDA_VISIBLE_DEVICES $CANDLE_DATA_DIR $CANDLE_CONFIG`
+
+- set *CUDA_VISIBLE_DEVICES* to a GPU device ID to make this devices visible to the application
+- *CANDLE_DATA_DIR*, path to base CANDLE directory for model input and outputs
+- *CANDLE_CONFIG* , path to CANDLE config file must be inside *CANDLE_DATA_DIR*
+
+Example:
+```bash
+git clone ...
+cd NIHGCN
+mkdir data
+source candle_glue.sh
+train.sh 2 ./data ./data/test.cfg
+```
+
+
+## Inference
 - infer.sh (soon)
 
 # Requirements
