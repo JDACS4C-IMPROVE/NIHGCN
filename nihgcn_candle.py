@@ -14,6 +14,8 @@ from model import nihgcn, Optimizer
 
 file_path = os.path.dirname(os.path.realpath(__file__))
 
+# JAMAL: all the keywords in the default_model file that are not standard candle keywords need to be added here
+
 additional_definitions = [
    {'name':'alpha',
        'nargs':'+',
@@ -41,6 +43,7 @@ class NIHGCN(candle.Benchmark):  # 1
             self.additional_definitions = additional_definitions
 
 def initialize_parameters(default_model="default_class_model.txt"):
+   # JAMAL: default_model should be nihgcn_default_model.txt
 
     # Build benchmark object
     NIHGCN_common = NIHGCN(
@@ -70,6 +73,9 @@ def run(params):
     #    -dealing with multiple data input files (i.e., expression data, drug response data)
     #    and not a singular training data file (as it is currently set up)
     #Below not in nihgcn_params.txt yet because there is probably a better way of doing it
+   
+    # JAMAL: These should in fact all be in nihgcn_params.txt, and defined in additional_definitions
+      
     params['layer_size']=[1024,1024]
     #parser.add_argument('--layer_size', nargs='?', default=[1024,1024],
     #                    help='Output sizes of every layer')
