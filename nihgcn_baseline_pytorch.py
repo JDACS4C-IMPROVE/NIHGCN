@@ -2,8 +2,6 @@
 
 import os
 import candle
-from pytorch_lightning import Trainer
-from pytorch_lightning.callbacks import ModelCheckpoint
 
 from load_data import load_data
 from sklearn.model_selection import KFold
