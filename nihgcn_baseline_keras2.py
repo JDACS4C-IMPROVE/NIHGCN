@@ -27,10 +27,15 @@ additional_definitions = [
        'nargs':'+',
        'type': float,
        'help':'some kind of weight decay'},
+    {'name':'target_drug_cids',
+       'nargs':'+',
+       'type':int,
+       'help':'Drug target IDs to hold out as part of the test set'},
 ]
 
 required = ['learning_rate',
             'epochs',
+            'dense'
             ]
 
 class NIHGCN(candle.Benchmark):  # 1
@@ -45,7 +50,7 @@ def initialize_parameters(default_model="default_class_model.txt"):
     # Build benchmark object
     NIHGCN_common = NIHGCN(
         file_path,
-        "nihgcn_params.txt",
+        "nihgcn_default_model.txt",
         "pytorch",
         prog="nihgcn",
         desc="from NIHGCN paper by Peng et al.",
@@ -69,12 +74,9 @@ def run(params):
     #  *additional CANDLE requirements to consider:
     #    -dealing with multiple data input files (i.e., expression data, drug response data)
     #    and not a singular training data file (as it is currently set up)
-    #Below not in nihgcn_params.txt yet because there is probably a better way of doing it
-    params['layer_size']=[1024,1024]
-    #parser.add_argument('--layer_size', nargs='?', default=[1024,1024],
-    #                    help='Output sizes of every layer')
-    
-    params['target_drug_cids'] = np.array([5330286, 11338033, 24825971])
+    #There is probably a better way of handling 'layer_size' and 'target_drug_cids'
+    #params['layer_size']=[1024,1024]
+    params['target_drug_cids'] = np.array(params['target_drug_cids'])
     #load data
     res, drug_finger, exprs, null_mask, target_indexes, target_pos_num = load_data(params)
     #drug_sum = np.sum(res, axis=0)
@@ -92,9 +94,9 @@ def run(params):
             sampler = TargetSampler(response_mat=res, null_mask=null_mask, target_indexes=target_indexes,
                                     pos_train_index=train_index, pos_test_index=test_index)
             model = nihgcn(adj_mat=sampler.train_data, cell_exprs=exprs, drug_finger=drug_finger,
-                           layer_size=params['layer_size'], alpha=params['alpha'], gamma=params['gamma'],
+                           layer_size=params['dense'], alpha=params['alpha'], gamma=params['gamma'],
                            device=params['gpus'])
-            opt = Optimizer(sampler.train_data, exprs, drug_finger, params['layer_size'], params['alpha'], params['gamma'], model,
+            opt = Optimizer(sampler.train_data, exprs, drug_finger, params['dense'], params['alpha'], params['gamma'], model,
                             sampler.train_data, sampler.test_data, sampler.test_mask, 
                             sampler.train_mask, roc_auc, lr=params['learning_rate'], wd=params['weight_decay'],
                             epochs=params['epochs'], device=params['gpus']).to(params['gpus'])

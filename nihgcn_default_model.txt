@@ -6,6 +6,7 @@ output_dir = '../results'
 gpus = 'cuda:0'
 learning_rate = 0.001
 epochs = 1000
+dense = [1024,1024]
 [Local]
 #need to add weight_decay, alpha, and gamma as an additional parameter at some point
 weight_decay = 0.00001
@@ -21,3 +22,4 @@ tcga_exprs_data = 'tcga_exprs.csv'
 cell_drug_null_data = 'null_mask.csv'
 tcga_drug_null_data = 'tcga_null_mask.csv'
 pdx_drug_null_data = 'pdx_null_mask.csv'
+target_drug_cids = [5330286, 11338033, 24825971]
