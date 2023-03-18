@@ -10,10 +10,34 @@ from sklearn.model_selection import KFold
 from Internal.Single.NIHGCN_Single import nihgcn_single
 from myutils import *
 from sampler import TargetSampler
-from model import nihgcn, Optimizer
+from model import nihgcn, Optimizer, EvalRun
 
 candle_data_dir = os.environ.get('CANDLE_DATA_DIR')
 file_path = os.path.dirname(os.path.realpath(__file__))
+
+additional_definitions = [
+   {'name':'alpha',
+       'nargs':'+',
+       'type': float,
+       'help':'message passing weight'},
+    {'name':'gamma',
+       'nargs':'+',
+       'type': int,
+       'help':'not sure'},
+    {'name':'weight_decay',
+       'nargs':'+',
+       'type': float,
+       'help':'some kind of weight decay'},
+    {'name':'target_drug_cids',
+       'nargs':'+',
+       'type':int,
+       'help':'Drug target IDs to hold out as part of the test set'},
+]
+
+required = ['learning_rate',
+            'epochs',
+            'dense'
+            ]
 
 class NIHGCN(candle.Benchmark):  # 1
     def set_locals(self):
@@ -32,37 +56,41 @@ def initialize_parameters(default_model="default_class_model.txt"):
         prog="nihgcn",
         desc="from NIHGCN paper by Peng et al.",
     )
+    # Initialize parameters
+    gParameters = candle.finalize_parameters(NIHGCN_common)
+    return gParameters
 
 
 def predicting(model, params):
     res, drug_finger, exprs, null_mask, target_indexes, target_pos_num = load_data(params)
     params['target_drug_cids'] = np.array(params['target_drug_cids'])
+    #print(target_pos_num)
+    #print(params['target_drug_cids'])
 
     model.eval()
     with torch.no_grad():
         sampler = TargetSampler(response_mat=res, null_mask=null_mask, target_indexes=target_indexes,
-                                pos_train_index=train_index, pos_test_index=test_index)
+                                pos_train_index=np.arange(target_pos_num), pos_test_index=np.arange(target_pos_num-1))
         model = nihgcn(adj_mat=sampler.train_data, cell_exprs=exprs, drug_finger=drug_finger,
                        layer_size=params['dense'], alpha=params['alpha'], gamma=params['gamma'],
                        device=params['gpus'])
-        opt = Optimizer(sampler.train_data, exprs, drug_finger, params['dense'], params['alpha'], params['gamma'], model,
-                        sampler.train_data, sampler.test_data, sampler.test_mask, 
-                        sampler.train_mask, roc_auc, lr=params['learning_rate'], wd=params['weight_decay'],
-                        epochs=params['epochs'], device=params['gpus']).to(params['gpus'])
-        true_data, predict_data, model_clone = opt()
-        true_datas = true_datas.append(translate_result(true_data))
-        predict_datas = predict_datas.append(translate_result(predict_data))
+        opt = EvalRun(sampler.train_data, exprs, drug_finger, params['dense'], params['alpha'], params['gamma'], model,
+                      sampler.train_data, sampler.test_data, sampler.test_mask, 
+                      sampler.train_mask, roc_auc, device=params['gpus']).to(params['gpus'])
+        true_data, predict_data, eval_result = opt()
+        true_datas = translate_result(true_data)
+        predict_datas = translate_result(predict_data)
     return true_datas,predict_datas
-
-def load_model():
-    
 
 def main():
     params = initialize_parameters()
-    print(params['output_dir'])
+    #print(params['output_dir'])
     output_path = os.path.join(params['data_dir'],params['output_dir']) #set to output directory
 
-    model = model.load(os.path.join(output_path,params['experiment_id']+"_best_model.pt"))
+    model = torch.load(os.path.join(output_path,params['experiment_id']+"_best_model.pt"))
     true_datas,predict_datas = predicting(model,params)
+    print(true_datas)
     print(predict_datas)
-    
+
+if __name__=="__main__":
+    main()

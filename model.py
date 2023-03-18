@@ -147,3 +147,35 @@ class Optimizer(nn.Module, ABC):
         print("Fit finished.")
         return true_data, best_predict, model_clone
 
+class EvalRun(nn.Module, ABC):
+    def __init__(self, adj_mat, cell_exprs, drug_finger, layer_size, alpha, gamma, model,
+                 train_data, test_data, test_mask, train_mask, evaluate_fun, device="cpu"):                 
+        super(EvalRun, self).__init__()
+        self.adj_mat = adj_mat
+        self.cell_exprs = cell_exprs
+        self.drug_finger = drug_finger
+        self.layer_size = layer_size
+        self.alpha = alpha
+        self.gamma = gamma
+        self.model = model.to(device)
+        self.train_data = train_data.to(device)
+        self.test_data = test_data.to(device)
+        self.test_mask = test_mask.to(device)
+        self.train_mask = train_mask.to(device)
+        self.evaluate_fun = evaluate_fun
+        self.device = device
+
+    def forward(self):
+        true_data = torch.masked_select(self.test_data, self.test_mask)
+        predict_data = self.model()
+        loss = cross_entropy_loss(self.train_data, predict_data, self.train_mask)
+        predict_data_masked = torch.masked_select(predict_data, self.test_mask)
+        auc = self.evaluate_fun(true_data, predict_data_masked)
+        best_auc = auc
+        best_predict = torch.masked_select(predict_data, self.test_mask)
+        model_clone = nihgcn(self.adj_mat, self.cell_exprs, self.drug_finger, self.layer_size,
+                             self.alpha, self.gamma, self.device)
+        print("loss:%.6f" % loss.item(), "auc:%.4f" % auc)
+        print("Fit finished.")
+        return true_data, best_predict, best_auc
+
