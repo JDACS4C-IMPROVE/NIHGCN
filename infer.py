@@ -70,13 +70,10 @@ def predicting(model, params):
     model.eval()
     with torch.no_grad():
         sampler = TargetSampler(response_mat=res, null_mask=null_mask, target_indexes=target_indexes,
-                                pos_train_index=np.arange(target_pos_num), pos_test_index=np.arange(target_pos_num-1))
-        model = nihgcn(adj_mat=sampler.train_data, cell_exprs=exprs, drug_finger=drug_finger,
-                       layer_size=params['dense'], alpha=params['alpha'], gamma=params['gamma'],
-                       device=params['gpus'])
-        opt = EvalRun(sampler.train_data, exprs, drug_finger, params['dense'], params['alpha'], params['gamma'], model,
-                      sampler.train_data, sampler.test_data, sampler.test_mask, 
-                      sampler.train_mask, roc_auc, device=params['gpus']).to(params['gpus'])
+                                pos_train_index=np.arange(target_pos_num), pos_test_index=np.arange(target_pos_num))
+        print(sampler.train_data)
+        print(sampler.test_data)
+        opt = EvalRun(model,sampler.test_data,sampler.test_mask,roc_auc, device=params['gpus']).to(params['gpus'])
         true_data, predict_data, eval_result = opt()
         true_datas = translate_result(true_data)
         predict_datas = translate_result(predict_data)

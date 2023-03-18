@@ -82,6 +82,14 @@ def run(params):
     true_datas = pd.DataFrame()
     predict_datas = pd.DataFrame()
 
+    output_path = os.path.join(params['data_dir'],params['output_dir']) #set to output directory
+    # Check whether the specified path exists or not
+    isExist = os.path.exists(output_path)
+    if not isExist:
+        # Create a new directory because it does not exist
+        os.makedirs(output_path)
+        print("The new directory is created!")
+
     #Note: Original n_kfolds loop left here, but setting to 1 and waiting to see if multiple runs will
     #      be defined by candle or inside of each code. 
     n_kfolds = 1
@@ -94,27 +102,21 @@ def run(params):
             model = nihgcn(adj_mat=sampler.train_data, cell_exprs=exprs, drug_finger=drug_finger,
                            layer_size=params['dense'], alpha=params['alpha'], gamma=params['gamma'],
                            device=params['gpus'])
+            print(sampler.train_data)
+            print(sampler.test_data)
             opt = Optimizer(sampler.train_data, exprs, drug_finger, params['dense'], params['alpha'], params['gamma'], model,
                             sampler.train_data, sampler.test_data, sampler.test_mask, 
                             sampler.train_mask, roc_auc, lr=params['learning_rate'], wd=params['weight_decay'],
                             epochs=params['epochs'], device=params['gpus']).to(params['gpus'])
+            #save best model inside of the Optimizer in model_clone
             true_data, predict_data, model_clone = opt()
             true_datas = true_datas.append(translate_result(true_data))
             predict_datas = predict_datas.append(translate_result(predict_data))
-            #save best model here
-            
-            break #ensures we do just one
-
-    output_path = os.path.join(params['data_dir'],params['output_dir']) #set to output directory
-    # Check whether the specified path exists or not
-    isExist = os.path.exists(output_path)
-    if not isExist:
-        # Create a new directory because it does not exist
-        os.makedirs(output_path)
-        print("The new directory is created!")
-    pd.DataFrame(true_datas).to_csv(os.path.join(output_path,"true_data.csv"))
-    pd.DataFrame(predict_datas).to_csv(os.path.join(output_path,"predict_data.csv"))
-    torch.save(model_clone,os.path.join(output_path,params['experiment_id']+"_best_model.pt")) #change the name here if you want 
+            torch.save(model_clone,os.path.join(output_path,params['experiment_id']+"_best_model.pt"))
+            pd.DataFrame(true_datas).to_csv(os.path.join(output_path,"true_data.csv"))
+            pd.DataFrame(predict_datas).to_csv(os.path.join(output_path,"predict_data.csv"))
+            break #ensures we do just one k-fold validation
+    return
 
 def main():
     params = initialize_parameters()
