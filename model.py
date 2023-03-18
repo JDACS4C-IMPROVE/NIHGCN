@@ -170,10 +170,9 @@ class EvalRun(nn.Module, ABC):
         predict_data = self.model()
         loss = cross_entropy_loss(self.test_data, predict_data, self.test_mask)
         predict_data_masked = torch.masked_select(predict_data, self.test_mask)
-        auc = self.evaluate_fun(true_data, predict_data_masked)
-        best_auc = auc
-        best_predict = torch.masked_select(predict_data, self.test_mask)
-        print("loss:%.6f" % loss.item(), "auc:%.4f" % auc)
+        auc,ap,acc,f1,mcc = self.evaluate_fun(true_data, predict_data_masked)
+        print("loss:%.6f" % loss.item(), "auc:%.4f" % auc, "ap:%.4f" % ap, "acc:%.4f" % acc,
+              "f1:%.4f" % f1, "mcc:%.4f" % mcc)
         print("Fit finished.")
-        return true_data, best_predict, best_auc
+        return true_data, predict_data_masked
 

@@ -71,10 +71,8 @@ def predicting(model, params):
     with torch.no_grad():
         sampler = TargetSampler(response_mat=res, null_mask=null_mask, target_indexes=target_indexes,
                                 pos_train_index=np.arange(target_pos_num), pos_test_index=np.arange(target_pos_num))
-        print(sampler.train_data)
-        print(sampler.test_data)
-        opt = EvalRun(model,sampler.test_data,sampler.test_mask,roc_auc, device=params['gpus']).to(params['gpus'])
-        true_data, predict_data, eval_result = opt()
+        opt = EvalRun(model,sampler.test_data,sampler.test_mask,evaluate_all,device=params['gpus']).to(params['gpus'])
+        true_data, predict_data = opt()
         true_datas = translate_result(true_data)
         predict_datas = translate_result(predict_data)
     return true_datas,predict_datas
@@ -85,9 +83,7 @@ def main():
     output_path = os.path.join(params['data_dir'],params['output_dir']) #set to output directory
 
     model = torch.load(os.path.join(output_path,params['experiment_id']+"_best_model.pt"))
-    true_datas,predict_datas = predicting(model,params)
-    print(true_datas)
-    print(predict_datas)
+    true_datas, predict_datas = predicting(model,params)
 
 if __name__=="__main__":
     main()
