@@ -2,8 +2,11 @@
 
 set -a
 export PYTHONPATH=/usr/local/NIHGCN
-export CANDLE_DATA_DIR=/candle_data_dir
 set +a
+
+if [ -z "$CANDLE_DATA_DIR" ]; then
+  echo "CANDLE_DATA_DIR not set"
+fi
 
 mkdir -p $CANDLE_DATA_DIR/NIHGCN/Data
 
