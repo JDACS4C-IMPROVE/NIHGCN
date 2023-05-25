@@ -12,6 +12,15 @@
 ### Path to your CANDLEized model's main Python script###
 CANDLE_MODEL=/usr/local/NIHGCN/nihgcn_baseline_pytorch.py
 
+### Set env if CANDLE_MODEL is not in same directory as this script
+IMPROVE_MODEL_DIR=${IMPROVE_MODEL_DIR:-$( dirname -- "$0" )}
+
+CANDLE_MODEL=${IMPROVE_MODEL_DIR}/${CANDLE_MODEL}
+if [ ! -f ${CANDLE_MODEL} ] ; then
+	echo No such file ${CANDLE_MODEL}
+	exit 404
+fi
+
 if [ $# -lt 2 ] ; then
         echo "Illegal number of parameters"
         echo "CUDA_VISIBLE_DEVICES and CANDLE_DATA_DIR are required"
