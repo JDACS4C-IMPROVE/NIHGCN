@@ -135,7 +135,12 @@ class Optimizer(nn.Module, ABC):
             loss.backward()
             self.optimizer.step()
             predict_data_masked = torch.masked_select(predict_data, self.test_mask)
-            auc = self.evaluate_fun(true_data, predict_data_masked)
+            metrics = self.evaluate_fun(true_data, predict_data_masked)
+            if isinstance(metrics,tuple):
+                auc = metrics[0]
+                metrics=metrics[1]
+            else:
+                auc = metrics
             if auc > best_auc:
                 print("best model! auc:%.4f" % auc) #extra print statement
                 best_auc = auc
@@ -146,7 +151,7 @@ class Optimizer(nn.Module, ABC):
             if epoch % self.test_freq == 0:
                 print("epoch:%4d" % epoch.item(), "loss:%.6f" % loss.item(), "auc:%.4f" % auc)
         print("Fit finished.")
-        return true_data, best_predict, model_clone
+        return true_data, best_predict, model_clone, metrics
 
 class EvalRun(nn.Module, ABC):
     def __init__(self, model, test_data, test_mask, evaluate_fun, device="cpu"):                 

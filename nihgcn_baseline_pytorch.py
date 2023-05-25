@@ -59,23 +59,9 @@ def initialize_parameters(default_model="default_class_model.txt"):
     return gParameters
 
 def run(params):
-    #Notes for future:
-    #  *The way this code words with multiple files from gdsc/ccle/tcga/pdx is that it takes
-    #  the same data tables from different sources and concatenates the input data. Figuring
-    #  out the data will be pushed off until someone else sorts it out.
-    #  [--Alex Partin approves this message]
-    #  *candle_glue.sh is being use as a placeholder for putting the GDSC test data in the
-    #  right place. Goal is to get train.sh running first, then to worry about the data side
-    #  after some discussion with data team [led by Yitan] and CANDLE dev team [Jamal].
-    #  [--Andreas Wilke approves this message, with the promise that Chia will bring up
-    #  CANDLE requirements as he finds them]
-    #  *additional CANDLE requirements to consider:
-    #    -dealing with multiple data input files (i.e., expression data, drug response data)
-    #    and not a singular training data file (as it is currently set up)
     #There is probably a better way of handling 'layer_size' and 'target_drug_cids'
     #params['layer_size']=[1024,1024]
     params['target_drug_cids'] = np.array(params['target_drug_cids'])
-    #load data
     res, drug_finger, exprs, null_mask, target_indexes, target_pos_num = load_data(params)
     #drug_sum = np.sum(res, axis=0)
 
@@ -106,23 +92,26 @@ def run(params):
             print(sampler.test_data)
             opt = Optimizer(sampler.train_data, exprs, drug_finger, params['dense'], params['alpha'], params['gamma'], model,
                             sampler.train_data, sampler.test_data, sampler.test_mask, 
-                            sampler.train_mask, roc_auc, lr=params['learning_rate'], wd=params['weight_decay'],
+                            sampler.train_mask, evaluate_all, lr=params['learning_rate'], wd=params['weight_decay'],
                             epochs=params['epochs'], device=params['gpus']).to(params['gpus'])
             #save best model inside of the Optimizer in model_clone
-            true_data, predict_data, model_clone = opt()
+            true_data, predict_data, model_clone, metrics = opt()
             true_datas = true_datas.append(translate_result(true_data))
             predict_datas = predict_datas.append(translate_result(predict_data))
             torch.save(model_clone,os.path.join(output_path,params['experiment_id']+"_best_model.pt"))
             pd.DataFrame(true_datas).to_csv(os.path.join(output_path,"true_data.csv"))
             pd.DataFrame(predict_datas).to_csv(os.path.join(output_path,"predict_data.csv"))
-            break #ensures we do just one k-fold validation
-    return
+            #break #ensures we do just one k-fold validation
+    return metrics
 
 def main():
     params = initialize_parameters()
     print(params['data_dir'])
-    run(params)
-    print("Success so far!")
-
+    scores=run(params)
+    print(scores)
+    print("\nIMPROVE_RESULT val_loss:\t{}\n".format(scores["CrossEntropyLoss"]))
+    with open(Path(args.output_dir) / "scores.json", "w", encoding="utf-8") as f:
+        json.dump(scores, f, ensure_ascii=False, indent=4)
+    
 if __name__=="__main__":
     main()
