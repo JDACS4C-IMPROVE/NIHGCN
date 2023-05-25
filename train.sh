@@ -53,6 +53,7 @@ elif [ $# -ge 3 ] ; then
         fi
 fi
 
+export CANDLE_DATA_DIR=${CANDLE_DATA_DIR}
 
 # Display runtime arguments
 echo "using CUDA_VISIBLE_DEVICES ${CUDA_VISIBLE_DEVICES}"
