@@ -53,6 +53,15 @@ elif [ $# -ge 3 ] ; then
         fi
 fi
 
+if [ -d ${CANDLE_DATA_DIR} ]; then
+    if [ "$(ls -A ${CANDLE_DATA_DIR})" ] ; then
+	echo "using data from ${CANDLE_DATA_DIR}"
+    else
+	./candle_glue.sh
+	echo "using original data placed in ${CANDLE_DATA_DIR}"
+    fi
+fi
+
 export CANDLE_DATA_DIR=${CANDLE_DATA_DIR}
 
 # Display runtime arguments
