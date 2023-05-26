@@ -5,7 +5,7 @@ model_name = 'NIHGCN'
 output_dir = '../results'
 gpus = 'cuda:0'
 learning_rate = 0.001
-epochs = 1000
+epochs = 4
 dense = [1024,1024]
 [Local]
 #need to add weight_decay, alpha, and gamma as an additional parameter at some point
