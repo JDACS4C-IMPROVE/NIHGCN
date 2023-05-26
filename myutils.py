@@ -163,9 +163,9 @@ def to_tensor(positive, identity=False):
     return data
 
 
-def evaluate_all(true_data: torch.Tensor, predict_data: torch.Tensor):
+def evaluate_all(true_data: torch.Tensor, predict_data: torch.Tensor, mask: torch.Tensor):
     assert torch.all(true_data.ge(0)) and torch.all(true_data.le(1)), "Out of range!"
-    loss = cross_entropy_loss(true_data,predict_data)
+    loss = cross_entropy_loss(true_data,predict_data,mask)
     auc = roc_auc(true_data, predict_data)
     ap = ap_score(true_data, predict_data)
     f1, thresholds = f1_score_binary(true_data, predict_data)
