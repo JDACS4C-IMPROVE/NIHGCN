@@ -7,7 +7,7 @@ import torch.nn as nn
 import seaborn as sns
 import pubchempy as pcp
 import scipy.sparse as sp
-from sklearn.metrics import roc_auc_score, average_precision_score
+from sklearn.metrics import roc_auc_score, average_precision_score,r2_score
 import itertools as it
 
 def init_seeds(seed=0):
@@ -173,7 +173,8 @@ def evaluate_all(true_data: torch.Tensor, predict_data: torch.Tensor):
     precision = precision_binary(true_data, predict_data, thresholds)
     recall = recall_binary(true_data, predict_data, thresholds)
     mcc = mcc_binary(true_data, predict_data, thresholds)
-    metrics = {'CrossEntropyLoss':loss, 'AUC':auc, 'AP':ap, 'ACC':acc, 'F1':f1, 'MCC':mcc}
+    r2 = r2_score(true_data,predict_data)
+    metrics = {'CrossEntropyLoss':loss, 'auc':auc, 'ap':ap, 'acc':acc, 'f1':f1, 'mcc':mcc, 'r2':r2}
     return loss, metrics
 
 def evaluate_auc(true_data: torch.Tensor, predict_data: torch.Tensor):
