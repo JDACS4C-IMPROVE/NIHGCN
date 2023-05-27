@@ -9,6 +9,7 @@ from Internal.Single.NIHGCN_Single import nihgcn_single
 from myutils import *
 from sampler import TargetSampler
 from model import nihgcn, Optimizer
+from pathlib import Path
 
 file_path = os.path.dirname(os.path.realpath(__file__))
 
