@@ -11,6 +11,7 @@
 
 ### Path to your CANDLEized model's main Python script###
 CANDLE_MODEL=nihgcn_baseline_pytorch.py
+MODEL_NAME=NIHGCN
 
 ### Set env if CANDLE_MODEL is not in same directory as this script
 IMPROVE_MODEL_DIR=${IMPROVE_MODEL_DIR:-$( dirname -- "$0" )}
@@ -53,12 +54,14 @@ elif [ $# -ge 3 ] ; then
         fi
 fi
 
-if [ -d ${CANDLE_DATA_DIR} ]; then
-    if [ "$(ls -A ${CANDLE_DATA_DIR})" ] ; then
-	echo "using data from ${CANDLE_DATA_DIR}"
+FULL_DATA_DIR="$CANDLE_DATA_DIR/$MODEL_NAME/Data"
+
+if [ -d ${FULL_DATA_DIR} ]; then
+    if [ "$(ls -A ${FULL_DATA_DIR})" ] ; then
+	echo "using data from ${FULL_DATA_DIR}"
     else
 	./candle_glue.sh
-	echo "using original data placed in ${CANDLE_DATA_DIR}"
+	echo "using original data placed in ${FULL_DATA_DIR}"
     fi
 fi
 
