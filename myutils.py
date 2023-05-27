@@ -182,7 +182,7 @@ def evaluate_all(true_data: torch.Tensor, predict_data: torch.Tensor):
     precision = precision_binary(true_data, predict_data, thresholds)
     recall = recall_binary(true_data, predict_data, thresholds)
     mcc = mcc_binary(true_data, predict_data, thresholds)
-    r2 = r2_score(true_data.cpu().numpy(),predict_data.cpu().numpy())
+    r2 = r2_score(true_data.cpu().detach().numpy(),predict_data.cpu().detach().numpy())
     metrics = {'CrossEntropyLoss':loss, 'auc':auc, 'ap':ap, 'acc':acc, 'f1':f1, 'mcc':mcc, 'r2':r2}
     return loss, metrics
 
