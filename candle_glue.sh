@@ -11,7 +11,7 @@ fi
 
 mkdir -p $CANDLE_DATA_DIR/NIHGCN/Data
 
-python get_test_data.py
+python $PYTHONPATH/get_test_data.py
 
 #move directories around - use GDSC as test case
 mv $CANDLE_DATA_DIR/common/Data/GDSC/*.csv $CANDLE_DATA_DIR/NIHGCN/Data/.
