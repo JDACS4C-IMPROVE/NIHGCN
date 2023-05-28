@@ -111,7 +111,7 @@ def main():
     scores=run(params)
     print(scores)
     print("\nIMPROVE_RESULT val_loss:\t{}\n".format(scores["CrossEntropyLoss"]))
-    with open(Path(args.output_dir) / "scores.json", "w", encoding="utf-8") as f:
+    with open(Path(output_path) / "scores.json", "w", encoding="utf-8") as f:
         json.dump(scores, f, ensure_ascii=False, indent=4)
     
 if __name__=="__main__":
