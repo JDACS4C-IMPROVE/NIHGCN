@@ -140,7 +140,8 @@ def cross_entropy_loss_masked(true_data: torch.Tensor, predict_data:  torch.Tens
     :return: cross entropy loss
     """
     loss_fun = nn.BCELoss()
-    loss = loss_fun(predict_data, true_data)
+    with torch.no_grad():
+        loss = loss_fun(predict_data, true_data)
     return loss
 
 def mask(positive: sp.coo.coo_matrix, negative: sp.coo.coo_matrix, dtype=int):
