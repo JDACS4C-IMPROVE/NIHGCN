@@ -127,7 +127,7 @@ class Optimizer(nn.Module, ABC):
     def forward(self):
         true_data = torch.masked_select(self.test_data, self.test_mask)
         best_predict = 0
-        best_auc = 0
+        best_loss = 100
         for epoch in torch.arange(self.epochs):
             predict_data = self.model()
             loss = cross_entropy_loss(self.train_data, predict_data, self.train_mask)
