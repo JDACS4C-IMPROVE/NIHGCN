@@ -185,7 +185,7 @@ def evaluate_all(true_data: torch.Tensor, predict_data: torch.Tensor):
     mcc = mcc_binary(true_data, predict_data, thresholds)
     r2 = r2_score(true_data.cpu().detach().numpy(),predict_data.cpu().detach().numpy())
     metrics = {'CrossEntropyLoss':loss, 'auc':auc, 'ap':ap, 'acc':acc, 'f1':f1, 'mcc':mcc, 'r2':r2}
-    return loss, metrics
+    return metrics
 
 def evaluate_auc(true_data: torch.Tensor, predict_data: torch.Tensor):
     assert torch.all(true_data.ge(0)) and torch.all(true_data.le(1)), "Out of range!"
