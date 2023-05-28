@@ -110,6 +110,7 @@ def main():
     print(params['data_dir'])
     scores=run(params)
     print(scores)
+    output_path = os.path.join(params['data_dir'],params['output_dir'])
     print("\nIMPROVE_RESULT val_loss:\t{}\n".format(scores["CrossEntropyLoss"]))
     with open(Path(output_path) / "scores.json", "w", encoding="utf-8") as f:
         json.dump(scores, f, ensure_ascii=False, indent=4)
