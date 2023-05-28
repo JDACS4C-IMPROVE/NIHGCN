@@ -141,7 +141,7 @@ class Optimizer(nn.Module, ABC):
                 metrics=metrics[1]
             else:
                 auc = metrics
-            if auc > best_auc:
+            if auc < best_auc: #flipped bc I'm using a loss
                 print("best model epoch %i auc:%.4f" % (epoch, auc)) #extra print statement
                 best_auc = auc
                 if type(metrics) is dict:
