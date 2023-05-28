@@ -145,7 +145,7 @@ class Optimizer(nn.Module, ABC):
                                      self.alpha, self.gamma, self.device)
                 model_clone.load_state_dict(copy.deepcopy(self.model.state_dict()))
             if epoch % self.test_freq == 0:
-                print("epoch:%4d" % epoch.item(), "loss:%.6f" % loss.item(), "auc:%.4f" % auc)
+                print("epoch:%4d" % epoch.item(), "loss:%.6f" % loss.item())
         print("Fit finished.")
         return true_data, best_predict, model_clone, metrics
 
