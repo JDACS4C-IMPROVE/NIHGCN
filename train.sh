@@ -55,6 +55,7 @@ elif [ $# -ge 3 ] ; then
 fi
 
 FULL_DATA_DIR="$CANDLE_DATA_DIR/$MODEL_NAME/Data"
+echo $FULL_DATA_DIR
 
 if [ -d ${FULL_DATA_DIR} ]; then
     if [ "$(ls -A ${FULL_DATA_DIR})" ] ; then
