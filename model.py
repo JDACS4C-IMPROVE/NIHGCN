@@ -139,7 +139,7 @@ class Optimizer(nn.Module, ABC):
                 best_loss = loss
                 predict_data_masked = torch.masked_select(predict_data, self.test_mask)
                 metrics = self.evaluate_fun(true_data, predict_data_masked)
-                metrics['best_epoch']=epoch
+                metrics['best_epoch']=epoch.item()
                 best_predict = torch.masked_select(predict_data, self.test_mask)
                 model_clone = nihgcn(self.adj_mat, self.cell_exprs, self.drug_finger, self.layer_size,
                                      self.alpha, self.gamma, self.device)
