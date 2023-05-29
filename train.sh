@@ -64,6 +64,9 @@ if [ -d ${FULL_DATA_DIR} ]; then
 	./candle_glue.sh
 	echo "using original data placed in ${FULL_DATA_DIR}"
     fi
+else
+    ./candle_glue.sh
+    echo "using original data placed in ${FULL_DATA_DIR}"
 fi
 
 export CANDLE_DATA_DIR=${CANDLE_DATA_DIR}
