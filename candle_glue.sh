@@ -1,7 +1,7 @@
 #!/bin/bash
 
 set -a
-export PYTHONPATH=/usr/local/NIHGCN
+export PYTHONPATH=$IMPROVE_MODEL_DIR
 set +a
 
 if [ -z "$CANDLE_DATA_DIR" ]; then
